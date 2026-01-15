@@ -1,5 +1,7 @@
 # Gemini RAG System Walkthrough
 
+![alt text](936b7eedba773cac_1440.png)
+
 ## Overview
 This is a comprehensive Retrieval-Augmented Generation (RAG) system built with **Gemini 2.5 Flash** and **Qdrant**. It features a modular multi-page Streamlit interface for seamless configuration, document ingestion, and intelligent chatting.
 
