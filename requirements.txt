@@ -1,0 +1,5 @@
+streamlit
+google-genai
+qdrant-client
+pymupdf
+langchain-text-splitters
