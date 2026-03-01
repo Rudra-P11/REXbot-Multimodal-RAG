@@ -6,7 +6,7 @@ class QdrantHandler:
     def __init__(self, url: str, api_key: str):
         self.client = QdrantClient(url=url, api_key=api_key)
         self.collection_name = "gemini_rag_collection"
-        self.vector_size = 3072 # Gemini 2.5/Embedding-001 standard is often 3072
+        self.vector_size = 3072 # Standard for models/gemini-embedding-001
 
     def create_collection(self):
         """Creates the Qdrant collection if it doesn't exist, or recreates if dimensions mismatch."""

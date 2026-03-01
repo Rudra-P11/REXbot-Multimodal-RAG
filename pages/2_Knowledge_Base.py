@@ -10,6 +10,15 @@ import io
 
 st.title("📔 Knowledge Base Builder")
 
+if "gemini_api_key" not in st.session_state:
+    st.session_state.gemini_api_key = ""
+if "qdrant_url" not in st.session_state:
+    st.session_state.qdrant_url = ""
+if "qdrant_api_key" not in st.session_state:
+    st.session_state.qdrant_api_key = ""
+if "indexed_files" not in st.session_state:
+    st.session_state.indexed_files = []
+
 if not st.session_state.get("gemini_api_key") or not st.session_state.get("qdrant_api_key"):
     st.warning("🎡 Please configure your API keys in the Configuration page first.")
     st.stop()
@@ -30,7 +39,7 @@ uploaded_file = st.file_uploader("Upload a PDF Document", type=["pdf"])
 
 if uploaded_file:
     with st.expander("📄 PDF Processing Status", expanded=True):
-        process_images = st.checkbox("Enable Multimodal Processing (Extract & Describe Images)", value=False)
+        process_images = st.checkbox("Enable Multimodal Processing (Extract & Describe Images)", value=True)
         st.info("💡 Standardized High-Quality Chunking is enabled (1500 chars / 10% overlap).")
 
     if st.button("🪄 Process and Index Document"):
@@ -50,7 +59,12 @@ if uploaded_file:
                     try:
                         image = Image.open(io.BytesIO(img_data["bytes"]))
                         
-                        desc = f"Image on page {img_data['page']}, index {img_data['index']}. [Image Content Placeholder]" 
+                        status.write(f"Describing image {i+1} of {len(images)}...")
+                        desc = gemini.describe_image(img_data["bytes"])
+                        
+                        if not desc or desc.strip() == "":
+                            desc = f"Image on page {img_data['page']}, index {img_data['index']}. [Image Description Failed]" 
+                            
                         image_descriptions.append(desc)
                     except Exception as e:
                         print(f"Error processing image {i}: {e}")

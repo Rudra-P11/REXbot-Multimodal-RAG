@@ -8,6 +8,15 @@ Please enter your API keys below. These are required for the system to function.
 - **Qdrant Credentials**: Get them from [Qdrant Cloud](https://cloud.qdrant.io/).
 """)
 
+if "gemini_api_key" not in st.session_state:
+    st.session_state.gemini_api_key = ""
+if "qdrant_url" not in st.session_state:
+    st.session_state.qdrant_url = ""
+if "qdrant_api_key" not in st.session_state:
+    st.session_state.qdrant_api_key = ""
+if "indexed_files" not in st.session_state:
+    st.session_state.indexed_files = []
+
 with st.form("config_form"):
     gemini_key = st.text_input("Gemini API Key", value=st.session_state.gemini_api_key, type="password")
     qdrant_url = st.text_input("Qdrant URL", value=st.session_state.qdrant_url, placeholder="https://xxx.qdrant.tech")

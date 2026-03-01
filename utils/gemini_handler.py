@@ -8,16 +8,15 @@ class GeminiHandler:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.client = genai.Client(api_key=self.api_key)
-        self.model_name = "gemini-2.5-flash" # Use 3.0 or 3.5 if available
-        self.embedding_model = "text-embedding-004"
+        self.model_name = "gemini-2.5-flash" 
+        self.embedding_model = "models/gemini-embedding-001"
         
     def get_embedding(self, text: str) -> List[float]:
         """Generates embeddings for the given text."""
         try:
             result = self.client.models.embed_content(
                 model=self.embedding_model,
-                contents=text,
-                config=types.EmbedContentConfig(task_type="RETRIEVAL_DOCUMENT")
+                contents=text
             )
             return result.embeddings[0].values
         except Exception as e:
@@ -29,8 +28,7 @@ class GeminiHandler:
         try:
             result = self.client.models.embed_content(
                 model=self.embedding_model,
-                contents=text,
-                config=types.EmbedContentConfig(task_type="RETRIEVAL_QUERY")
+                contents=text
             )
             return result.embeddings[0].values
         except Exception as e:
@@ -58,12 +56,28 @@ class GeminiHandler:
                 contents=contents,
                 config=types.GenerateContentConfig(
                     system_instruction=system_instruction,
-                    temperature=0.7
+                    temperature=0.3
                 )
             )
             return response.text
         except Exception as e:
             return f"Error communicating with Gemini (SDK v2): {e}"
+
+    def describe_image(self, image_bytes: bytes) -> str:
+        """Processes an image using Gemini Vision to generate a description."""
+        try:
+            from PIL import Image
+            import io
+            image = Image.open(io.BytesIO(image_bytes))
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=[image, "Describe this image, chart, or table in high detail. Focus on extracting all text, numbers, and structural information."],
+                config=types.GenerateContentConfig(temperature=0.2)
+            )
+            return response.text
+        except Exception as e:
+            print(f"Error describing image: {e}")
+            return ""
 
     def create_context_cache(self, content: str, display_name: str):
         """Creates a context cache using the new SDK."""
